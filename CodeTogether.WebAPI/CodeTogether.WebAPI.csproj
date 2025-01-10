@@ -17,4 +17,8 @@
     <ProjectReference Include="..\CodeTogether.DTO\CodeTogether.DTO.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Update\" />
+  </ItemGroup>
+
 </Project>

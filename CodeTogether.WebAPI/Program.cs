@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 using CodeTogether.DB;
 
 
@@ -16,7 +18,10 @@ builder.Services.AddCors(config =>
 		policy.AllowAnyOrigin();
 	});
 });
-
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+	options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 var app = builder.Build();
 
@@ -40,6 +45,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
