@@ -1,4 +1,4 @@
-﻿namespace CodeTogether.WebAPI.Models.Create
+﻿namespace CodeTogether.Application.Models.Create
 {
 	public class CreateRoomModel
 	{

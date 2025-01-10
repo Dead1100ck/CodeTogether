@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 
 using CodeTogether.DB;
 using CodeTogether.DTO;
-using CodeTogether.WebAPI.Models.Create;
+using CodeTogether.Application.Models.Create;
+using CodeTogether.Application.Rooms.Commands;
+using CodeTogether.Application.Rooms.Querries;
 
 
 namespace CodeTogether.WebAPI.Controllers
@@ -14,19 +16,21 @@ namespace CodeTogether.WebAPI.Controllers
 
 
 		[HttpGet]
-		public async Task<List<Room>> GetAll()
+		public async Task<ActionResult<List<Room>>> GetAll()
 		{
-			return _dbContext.Rooms.Where(r => r.Type == RoomType.Public).ToList();
+			var querry = new GetAllPublicRoomsQuerryHandler(_dbContext);
+			var response = await querry.HandleAsync();
+
+			return Ok(response);
 		}
 
 		[HttpPost]
-		public async Task<Room> CreateRoom(CreateRoomModel createRoomModel)
+		public async Task<ActionResult<Room>> CreateRoom([FromBody] CreateRoomModel createRoomModel)
 		{
-			Room newRoom = new Room { Type = createRoomModel.Type };
-			await _dbContext.Rooms.AddAsync(newRoom);
-			await _dbContext.SaveChangesAsync();
+			var command = new CreateRoomCommandHandler(_dbContext);
+			var response = await command.HandleAsync(createRoomModel);
 
-			return newRoom;
+			return Ok(response);
 		}
 	}
 }

@@ -13,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeTogether.DTO\CodeTogether.DTO.csproj" />
+	  <ProjectReference Include="..\CodeTogether.Application\CodeTogether.Application.csproj" />
+	  <ProjectReference Include="..\CodeTogether.DTO\CodeTogether.DTO.csproj" />
   </ItemGroup>
 
 </Project>
