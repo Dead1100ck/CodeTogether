@@ -7,7 +7,7 @@ namespace CodeTogether.Auth
 {
 	public static class DependencyInjection
 	{
-		public static IServiceCollection AddAuthService(this IServiceCollection services, IAuthOptions options)
+		public static IServiceCollection AddTokenService(this IServiceCollection services, IAuthOptions options)
 		{
 			services.AddTransient<ITokenService>(t => new TokenService(options));
 

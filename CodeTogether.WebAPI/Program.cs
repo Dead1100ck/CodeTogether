@@ -1,11 +1,44 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 using CodeTogether.DB;
+using CodeTogether.Auth;
+using CodeTogether.WebAPI.Properties;
 
 
 var builder = WebApplication.CreateBuilder(args);
+var authOptions = builder.Configuration.GetSection("Jwt").Get<AuthOptions>();
+Console.WriteLine(authOptions);
 
 builder.Services.AddCodeTogetherDbContext(builder.Configuration);
+builder.Services.AddTokenService(authOptions);
+builder.Services.AddAuthentication(auth =>
+{
+	auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+	options.RequireHttpsMetadata = true;
+	options.SaveToken = true;
+	options.IncludeErrorDetails = true;
+
+	options.TokenValidationParameters = new TokenValidationParameters()
+	{
+		ValidateIssuer = authOptions.ValidateIssuer,
+		ValidateAudience = authOptions.ValidateAudience,
+		ValidateIssuerSigningKey = authOptions.ValidateIssuerSigningKey,
+		ValidIssuer = authOptions.Issuer,
+		ValidAudience = authOptions.Audience,
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.SecretKey)),
+		ClockSkew = TimeSpan.Zero,
+	};
+});
+/*builder.Services.AddAuthorization(options =>
+{
+
+});*/
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -25,6 +58,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var app = builder.Build();
 
+app.UseAuthentication();
 using (var scope = app.Services.CreateScope())
 {
 	var serviceProvider = scope.ServiceProvider;
