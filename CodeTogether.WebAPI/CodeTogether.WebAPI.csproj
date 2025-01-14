@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Application\CodeTogether.Application.csproj" />
+    <ProjectReference Include="..\CodeTogether.Auth\CodeTogether.Auth.csproj" />
     <ProjectReference Include="..\CodeTogether.DB\CodeTogether.DB.csproj" />
     <ProjectReference Include="..\CodeTogether.DTO\CodeTogether.DTO.csproj" />
   </ItemGroup>
