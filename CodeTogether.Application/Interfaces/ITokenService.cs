@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 
 
-namespace CodeTogether.Auth.Interfaces
+namespace CodeTogether.Application.Interfaces
 {
 	public interface ITokenService
 	{

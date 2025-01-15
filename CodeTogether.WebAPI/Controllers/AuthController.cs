@@ -4,8 +4,7 @@ using CodeTogether.DTO;
 using CodeTogether.DB;
 using CodeTogether.Application.Models.Auth;
 using CodeTogether.Application.Auth.Commands;
-using CodeTogether.Auth.Interfaces;
-using CodeTogether.Auth;
+using CodeTogether.Application.Interfaces;
 
 
 namespace CodeTogether.WebAPI.Controllers

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-using CodeTogether.Auth.Interfaces;
+using CodeTogether.Application.Interfaces;
 
 
 namespace CodeTogether.Auth

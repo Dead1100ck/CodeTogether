@@ -1,4 +1,4 @@
-﻿using CodeTogether.Auth.Interfaces;
+﻿using CodeTogether.Application.Interfaces;
 
 
 namespace CodeTogether.WebAPI.Properties
