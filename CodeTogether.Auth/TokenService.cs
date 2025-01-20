@@ -18,23 +18,6 @@ namespace CodeTogether.Auth
 			_option = option;
 		}
 
-		public string GetAccessToken(out DateTime expires)
-		{
-			expires = DateTime.UtcNow.AddMinutes(_option.TokenLifetime);
-
-			SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_option.SecretKey));
-			JwtSecurityToken token = new JwtSecurityToken(
-				issuer: _option.Issuer,
-				audience: _option.Audience,
-				claims: null,
-				expires: expires,
-				signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-			);
-
-			JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-			return handler.WriteToken(token);
-		}
-
 		public string GetAccessToken(IEnumerable<Claim> claims, out DateTime expires)
 		{
 			expires = DateTime.UtcNow.AddMinutes(_option.TokenLifetime);

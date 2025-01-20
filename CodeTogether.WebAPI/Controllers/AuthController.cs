@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 using CodeTogether.DTO;
 using CodeTogether.DB;
@@ -26,30 +27,30 @@ namespace CodeTogether.WebAPI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<User>> Login([FromBody] LoginUserModel loginUserModel, [FromServices] ITokenService tokenService)
 		{
-			var command = new LoginCommandHandler(_dbContext);
-			string accessToken = tokenService.GetAccessToken(out DateTime expires);
-			string refreshToken = tokenService.GetRefreshToken();
-			var response = await command.HandleAsync(loginUserModel, expires, accessToken, refreshToken);
+			var command = new LoginCommandHandler(_dbContext, tokenService);
+			var response = await command.HandleAsync(loginUserModel, HttpContext.User.Claims);
 
-			Response.Cookies.Append("AccessToken", accessToken);
+			Response.Cookies.Append("token", response.AccessToken);
 
 			return Ok(response);
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<User>> Refresh([FromBody] LoginUserModel loginUserModel, [FromServices] ITokenService tokenService)
+		public async Task<ActionResult<User>> Refresh([FromBody] RefreshTokenModel refreshTokenModel, [FromServices] ITokenService tokenService)
 		{
-			var command = new LoginCommandHandler(_dbContext);
-			string accessToken = tokenService.GetAccessToken(out DateTime expires);
-			string refreshToken = tokenService.GetRefreshToken();
-			var response = await command.HandleAsync(loginUserModel, expires, accessToken, refreshToken);
+			var command = new RefreshCommandHandler(_dbContext, tokenService);
+			var response = await command.HandleAsync(tokenService, refreshTokenModel.RefreshToken);
 
-			//var principial = tokenService.GetPrincipalFromExpiredToken(accessToken);
-			//string accessToken = tokenService.GetAccessToken((IEnumerable<System.Security.Claims.Claim>)principial, out DateTime expires);
-
-			Response.Cookies.Append("AccessToken", accessToken);
+			Response.Cookies.Append("token", response.AccessToken);
 
 			return Ok(response);
+		}
+
+		[HttpGet]
+		[Authorize]
+		public ActionResult AuthCheck()
+		{
+			return Ok();
 		}
 	}
 }

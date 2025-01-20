@@ -10,7 +10,6 @@ using CodeTogether.WebAPI.Properties;
 
 var builder = WebApplication.CreateBuilder(args);
 var authOptions = builder.Configuration.GetSection("Jwt").Get<AuthOptions>();
-Console.WriteLine(authOptions);
 
 builder.Services.AddCodeTogetherDbContext(builder.Configuration);
 builder.Services.AddTokenService(authOptions);
@@ -20,7 +19,7 @@ builder.Services.AddAuthentication(auth =>
 	auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 {
-	options.RequireHttpsMetadata = true;
+	options.RequireHttpsMetadata = false;
 	options.SaveToken = true;
 	options.IncludeErrorDetails = true;
 
@@ -35,10 +34,14 @@ builder.Services.AddAuthentication(auth =>
 		ClockSkew = TimeSpan.Zero,
 	};
 });
-/*builder.Services.AddAuthorization(options =>
+builder.Services.AddAuthorization(options =>
 {
-
-});*/
+	options.AddPolicy("User",
+		policy =>
+		{
+			policy.RequireAuthenticatedUser();
+		});
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -59,6 +62,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 var app = builder.Build();
 
 app.UseAuthentication();
+app.UseAuthorization();
+
 using (var scope = app.Services.CreateScope())
 {
 	var serviceProvider = scope.ServiceProvider;
