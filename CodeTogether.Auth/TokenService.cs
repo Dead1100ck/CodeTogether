@@ -21,15 +21,29 @@ namespace CodeTogether.Auth
 		public string GetAccessToken(IEnumerable<Claim> claims, out DateTime expires)
 		{
 			expires = DateTime.UtcNow.AddMinutes(_option.TokenLifetime);
-
 			SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_option.SecretKey));
-			JwtSecurityToken token = new JwtSecurityToken(
-				issuer: _option.Issuer,
-				audience: _option.Audience,
-				claims: claims,
-				expires: expires,
-				signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-			);
+			SigningCredentials signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+			JwtSecurityToken token;
+
+			if (claims.Count() == 3)
+			{
+				token = new JwtSecurityToken(
+					issuer: _option.Issuer,
+					audience: _option.Audience,
+					claims: claims,
+					expires: expires,
+					signingCredentials: signingCredentials
+				);
+			}
+			else
+			{
+				token = new JwtSecurityToken(
+					issuer: _option.Issuer,
+					claims: claims,
+					expires: expires,
+					signingCredentials: signingCredentials
+				);
+			}
 
 			JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 			return handler.WriteToken(token);
@@ -45,7 +59,8 @@ namespace CodeTogether.Auth
 				ValidateIssuerSigningKey = _option.ValidateIssuerSigningKey,
 				ValidIssuer = _option.Issuer,
 				ValidAudience = _option.Audience,
-				IssuerSigningKey = key
+				IssuerSigningKey = key,
+				ValidateLifetime = false
 			};
 
 			var tokenHandler = new JwtSecurityTokenHandler();

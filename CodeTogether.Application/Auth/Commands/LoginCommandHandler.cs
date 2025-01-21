@@ -16,14 +16,20 @@ namespace CodeTogether.Application.Auth.Commands
 		public LoginCommandHandler(ICodeTogetherDbContext dbContext, ITokenService tokenService) => (_dbcontext, _tokenService) = (dbContext, tokenService);
 
 
-		public async Task<User> HandleAsync(LoginUserModel loginUserModel, IEnumerable<Claim> claims)
+		public async Task<User> HandleAsync(LoginUserModel loginUserModel)
 		{
 			var findUser = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Username == loginUserModel.Username && u.Password == loginUserModel.Password);
 
 			if (findUser == null)
 				throw new Exception("BadRequest");
+			
+			List<Claim> Claims = [
+				new Claim(ClaimTypes.Name, findUser.Name),
+				new Claim(ClaimTypes.Surname, findUser.Surname),
+				new Claim(ClaimTypes.Email, findUser.Email)
+			];
 
-			findUser.AccessToken = _tokenService.GetAccessToken(claims, out DateTime expires);
+			findUser.AccessToken = _tokenService.GetAccessToken(Claims, out DateTime expires);
 			findUser.TokenExpires = expires;
 			findUser.RefreshToken = _tokenService.GetRefreshToken();
 

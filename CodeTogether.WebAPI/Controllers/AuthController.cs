@@ -28,9 +28,9 @@ namespace CodeTogether.WebAPI.Controllers
 		public async Task<ActionResult<User>> Login([FromBody] LoginUserModel loginUserModel, [FromServices] ITokenService tokenService)
 		{
 			var command = new LoginCommandHandler(_dbContext, tokenService);
-			var response = await command.HandleAsync(loginUserModel, HttpContext.User.Claims);
+			var response = await command.HandleAsync(loginUserModel);
 
-			Response.Cookies.Append("token", response.AccessToken);
+			Response.Cookies.Append("AccessToken", response.AccessToken);
 
 			return Ok(response);
 		}
@@ -39,9 +39,9 @@ namespace CodeTogether.WebAPI.Controllers
 		public async Task<ActionResult<User>> Refresh([FromBody] RefreshTokenModel refreshTokenModel, [FromServices] ITokenService tokenService)
 		{
 			var command = new RefreshCommandHandler(_dbContext, tokenService);
-			var response = await command.HandleAsync(tokenService, refreshTokenModel.RefreshToken);
+			var response = await command.HandleAsync(refreshTokenModel);
 
-			Response.Cookies.Append("token", response.AccessToken);
+			Response.Cookies.Append("AccessToken", response.AccessToken);
 
 			return Ok(response);
 		}
