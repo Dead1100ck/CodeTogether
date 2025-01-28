@@ -10,6 +10,8 @@ using CodeTogether.WebAPI.Properties;
 
 var builder = WebApplication.CreateBuilder(args);
 var authOptions = builder.Configuration.GetSection("Jwt").Get<AuthOptions>();
+if (authOptions == null)
+	throw new Exception("Auth options is null!");
 
 builder.Services.AddCodeTogetherDbContext(builder.Configuration);
 builder.Services.AddTokenService(authOptions);
@@ -42,7 +44,10 @@ builder.Services.AddAuthorization(options =>
 			policy.RequireAuthenticatedUser();
 		});
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(config =>
@@ -57,6 +62,10 @@ builder.Services.AddCors(config =>
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
 	options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+builder.Services.Configure<RouteOptions>(options =>
+{
+	options.LowercaseUrls = true;
 });
 
 var app = builder.Build();
@@ -74,7 +83,7 @@ using (var scope = app.Services.CreateScope())
 	}
 	catch (Exception exeption)
 	{
-
+		
 	}
 }
 

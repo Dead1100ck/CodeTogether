@@ -3,3 +3,10 @@
 GET {{CodeTogether.WebAPI_HostAddress}}/api/Room
 
 ###
+
+POST {{CodeTogether.WebAPI_HostAddress}}/api/Auth/RegisterUser
+Content-Type: Application/JSON
+
+{
+
+}

@@ -1,4 +1,4 @@
-﻿namespace CodeTogether.Application.Models.Auth
+﻿namespace CodeTogether.Application.Models.Requests.Auth.Create
 {
     public class RegisterUserModel
     {

@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Update\" />
+    <Folder Include="Models\Requests\Rooms\Update\" />
+    <Folder Include="Models\Responses\Rooms\" />
   </ItemGroup>
 
 </Project>

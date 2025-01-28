@@ -2,14 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 
 using CodeTogether.DB;
 using CodeTogether.DTO;
-using CodeTogether.Application.Models.Create;
 using CodeTogether.Application.Rooms.Commands;
 using CodeTogether.Application.Rooms.Querries;
+using CodeTogether.Application.Models.Requests.Rooms.Create;
 
 
 namespace CodeTogether.WebAPI.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	public class RoomController : BaseController
 	{
 		public RoomController(CodeTogetherDbContext dbContext) : base(dbContext) { }

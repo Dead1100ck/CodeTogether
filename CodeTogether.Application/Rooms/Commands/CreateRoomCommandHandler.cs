@@ -1,11 +1,11 @@
 ﻿using CodeTogether.Application.Interfaces;
-using CodeTogether.Application.Models.Create;
+using CodeTogether.Application.Models.Requests.Rooms.Create;
 using CodeTogether.DTO;
 
 
 namespace CodeTogether.Application.Rooms.Commands
 {
-	public class CreateRoomCommandHandler
+    public class CreateRoomCommandHandler
 	{
 		private readonly ICodeTogetherDbContext _dbContext;
 

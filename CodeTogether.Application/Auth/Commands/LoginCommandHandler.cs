@@ -2,13 +2,13 @@
 using System.Security.Claims;
 
 using CodeTogether.Application.Interfaces;
-using CodeTogether.Application.Models.Auth;
-using CodeTogether.DTO;
+using CodeTogether.Application.Models.Requests.Auth.Request;
+using CodeTogether.Application.Models.Responses.Auth;
 
 
 namespace CodeTogether.Application.Auth.Commands
 {
-	public class LoginCommandHandler
+    public class LoginCommandHandler
 	{
 		private ICodeTogetherDbContext _dbcontext;
 		private ITokenService _tokenService;
@@ -16,7 +16,7 @@ namespace CodeTogether.Application.Auth.Commands
 		public LoginCommandHandler(ICodeTogetherDbContext dbContext, ITokenService tokenService) => (_dbcontext, _tokenService) = (dbContext, tokenService);
 
 
-		public async Task<User> HandleAsync(LoginUserModel loginUserModel)
+		public async Task<GetTokensResponseModel> HandleAsync(LoginUserModel loginUserModel)
 		{
 			var findUser = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Username == loginUserModel.Username && u.Password == loginUserModel.Password);
 
@@ -24,9 +24,10 @@ namespace CodeTogether.Application.Auth.Commands
 				throw new Exception("BadRequest");
 			
 			List<Claim> Claims = [
-				new Claim(ClaimTypes.Name, findUser.Name),
-				new Claim(ClaimTypes.Surname, findUser.Surname),
-				new Claim(ClaimTypes.Email, findUser.Email)
+				new Claim("Name", findUser.Name),
+				new Claim("Surname", findUser.Surname),
+				new Claim("Username", findUser.Username),
+				new Claim("Email", findUser.Email)
 			];
 
 			findUser.AccessToken = _tokenService.GetAccessToken(Claims, out DateTime expires);
@@ -34,8 +35,8 @@ namespace CodeTogether.Application.Auth.Commands
 			findUser.RefreshToken = _tokenService.GetRefreshToken();
 
 			await _dbcontext.SaveChangesAsync(CancellationToken.None);
-
-			return findUser;
+			
+			return new GetTokensResponseModel().MappingUserToGetTokensResponseModel(findUser);
 		}
 	}
 }

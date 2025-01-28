@@ -20,12 +20,12 @@ namespace CodeTogether.Auth
 
 		public string GetAccessToken(IEnumerable<Claim> claims, out DateTime expires)
 		{
-			expires = DateTime.UtcNow.AddMinutes(_option.TokenLifetime);
+			expires = DateTime.UtcNow.AddSeconds(_option.TokenLifetime);
 			SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_option.SecretKey));
 			SigningCredentials signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 			JwtSecurityToken token;
 
-			if (claims.Count() == 3)
+			if (claims.Count() == 4)
 			{
 				token = new JwtSecurityToken(
 					issuer: _option.Issuer,

@@ -1,18 +1,18 @@
 ﻿using CodeTogether.Application.Interfaces;
-using CodeTogether.Application.Models.Auth;
+using CodeTogether.Application.Models.Requests.Auth.Create;
 using CodeTogether.DTO;
 
 
 namespace CodeTogether.Application.Auth.Commands
 {
-	public class RegisterCommandHandler
+    public class RegisterCommandHandler
 	{
 		private ICodeTogetherDbContext _dbContext;
 
 		public RegisterCommandHandler (ICodeTogetherDbContext dbContext) => _dbContext = dbContext;
 
 
-		public async Task<User> HandleAsync(RegisterUserModel registerUserModel)
+		public async Task HandleAsync(RegisterUserModel registerUserModel)
 		{
 			User user = new User() { 
 				Username = registerUserModel.Username,
@@ -25,7 +25,7 @@ namespace CodeTogether.Application.Auth.Commands
 			await _dbContext.Users.AddAsync(user);
 			await _dbContext.SaveChangesAsync(CancellationToken.None);
 
-			return user;
+			return;
 		}
 	}
 }

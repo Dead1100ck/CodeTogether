@@ -1,31 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using CodeTogether.DTO;
 using CodeTogether.DB;
-using CodeTogether.Application.Models.Auth;
 using CodeTogether.Application.Auth.Commands;
 using CodeTogether.Application.Interfaces;
+using CodeTogether.Application.Models.Requests.Auth.Create;
+using CodeTogether.Application.Models.Requests.Auth.Request;
+using CodeTogether.Application.Models.Requests.Auth.Update;
+using CodeTogether.Application.Models.Responses.Auth;
 
 
 namespace CodeTogether.WebAPI.Controllers
 {
-	public class AuthController : BaseController
+    public class AuthController : BaseController
 	{
 		public AuthController(CodeTogetherDbContext dbContext) : base(dbContext) { }
 
 
 		[HttpPost]
-		public async Task<ActionResult<User>> RegisterUser([FromBody] RegisterUserModel registerUserModel)
+		public async Task<ActionResult> Register([FromBody] RegisterUserModel registerUserModel)
 		{
 			var command = new RegisterCommandHandler(_dbContext);
-			var response = await command.HandleAsync(registerUserModel);
+			await command.HandleAsync(registerUserModel);
 
-			return Ok(response);
+			return Ok();
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<User>> Login([FromBody] LoginUserModel loginUserModel, [FromServices] ITokenService tokenService)
+		public async Task<ActionResult<GetTokensResponseModel>> Login([FromBody] LoginUserModel loginUserModel, [FromServices] ITokenService tokenService)
 		{
 			var command = new LoginCommandHandler(_dbContext, tokenService);
 			var response = await command.HandleAsync(loginUserModel);
@@ -36,7 +38,7 @@ namespace CodeTogether.WebAPI.Controllers
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<User>> Refresh([FromBody] RefreshTokenModel refreshTokenModel, [FromServices] ITokenService tokenService)
+		public async Task<ActionResult<GetTokensResponseModel>> Refresh([FromBody] RefreshTokenModel refreshTokenModel, [FromServices] ITokenService tokenService)
 		{
 			var command = new RefreshCommandHandler(_dbContext, tokenService);
 			var response = await command.HandleAsync(refreshTokenModel);
@@ -48,9 +50,9 @@ namespace CodeTogether.WebAPI.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public ActionResult AuthCheck()
+		public ActionResult Check()
 		{
-			return Ok();
+			return Ok("You are is authorize");
 		}
 	}
 }
